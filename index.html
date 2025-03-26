@@ -21,6 +21,12 @@
   <link rel="canonical" href="https://intentpdf.github.io/">
   <meta property="og:locale" content="en_US">
   <meta property="og:site_name" content="Intent to Marry PDF Generator">
+  <link rel="icon" type="image/png" href="/images/favicon-96x96.png" sizes="96x96" />
+  <link rel="icon" type="image/svg+xml" href="/images/favicon.svg" />
+  <link rel="shortcut icon" href="/images/favicon.ico" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon.png" />
+  <meta name="apple-mobile-web-app-title" content="Intent PDF" />
+  <link rel="manifest" href="/images/site.webmanifest" />
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -67,7 +73,7 @@
     body {
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-light);
-      color: var(--text-light);
+      color: #222; /* Adjusted for better contrast */
       margin: 0;
       padding: 2rem;
       transition: background 0.3s, color 0.3s;
@@ -161,7 +167,7 @@
       padding: 0.75rem 1.5rem;
       font-size: 1rem;
       background-color: var(--primary);
-      color: white;
+      color: #ffffff; /* Adjusted for better contrast */
       border: none;
       border-radius: 6px;
       cursor: pointer;
@@ -170,6 +176,7 @@
 
     button:hover {
       background-color: var(--primary-hover);
+      color: #ffffff; /* Ensure hover state also has sufficient contrast */
     }
 
     .pdf-container {
@@ -233,8 +240,8 @@
       <iframe id="pdfPreviewBeneficiary" title="Beneficiary PDF Preview"></iframe>
     </div>
   </div>
-  <footer style="text-align: center; margin-top: 2rem; font-size: 0.9rem; color: #555;">
-    Created by <a href="https://masihjahangiri.com" target="_blank" style="color: var(--primary); text-decoration: none;">masihjahangiri.com</a>
+  <footer style="text-align: center; margin-top: 2rem; font-size: 0.9rem; color: #333;">
+    Created by <a href="https://masihjahangiri.com" target="_blank" style="color: #0056b3; text-decoration: none;">masihjahangiri.com</a>
   </footer>
   <script>
     let inputTimeout;
