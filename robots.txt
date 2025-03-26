@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://intentpdf.github.io/sitemap.xml
