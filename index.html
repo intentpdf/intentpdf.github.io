@@ -52,7 +52,6 @@
   }
   </script>
   <title>Intent to Marry PDF Generator - K-1 Visa Tool</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
     :root {
       --bg-light: #f9f9f9;
@@ -64,6 +63,7 @@
       --border: #e0e0e0;
     }
 
+    /* Inline critical CSS */
     body {
       font-family: 'Inter', sans-serif;
       background-color: var(--bg-light);
@@ -106,6 +106,7 @@
       border: 1px solid var(--border);
       border-radius: 6px;
       background: white;
+      box-sizing: border-box;
     }
 
     .dark input,
@@ -186,6 +187,15 @@
       background: white;
     }
   </style>
+  <script>
+    // Defer loading of non-critical JS
+    document.addEventListener("DOMContentLoaded", function () {
+      const script = document.createElement("script");
+      script.src = "https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js";
+      script.defer = true;
+      document.body.appendChild(script);
+    });
+  </script>
 </head>
 <body>
   <div class="container">
@@ -216,10 +226,10 @@
       <label for="beneficiaryAddress">Beneficiary's Address</label>
       <textarea id="beneficiaryAddress" rows="3"></textarea>
     </div>
-    <button onclick="downloadPDFs()">Download PDFs</button>
+    <button style="color: #ffffff;" onclick="downloadPDFs()">Download PDFs</button>
     <div class="pdf-container">
-      <iframe id="pdfPreviewPetitioner"></iframe>
-      <iframe id="pdfPreviewBeneficiary"></iframe>
+      <iframe id="pdfPreviewPetitioner" title="Petitioner PDF Preview"></iframe>
+      <iframe id="pdfPreviewBeneficiary" title="Beneficiary PDF Preview"></iframe>
     </div>
   </div>
 
