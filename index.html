@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Easily generate your Letter of Intent to Marry PDF for K-1 Fiancé Visa applications. This free tool creates compliant documents for both petitioner and beneficiary, with live previews and dark mode support.">
+  <meta name="keywords" content="letter of intent to marry, K-1 visa, I-129F, fiancé visa, USCIS, pdf generator, immigration form">
+  <meta name="author" content="IntentToMarryPDF.com">
+  <meta property="og:title" content="Intent to Marry PDF Generator - Free K-1 Visa Tool">
+  <meta property="og:description" content="Generate compliant Letter of Intent to Marry PDFs for your K-1 Fiancé Visa petition. Instantly preview and download your documents online.">
+  <meta property="og:image" content="https://yourdomain.com/images/intent-to-marry-thumbnail.jpg">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://yourdomain.com">
+  <title>Intent to Marry PDF Generator - K-1 Visa Tool</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    :root {
+      --bg-light: #f9f9f9;
+      --bg-dark: #1f1f1f;
+      --text-light: #333;
+      --text-dark: #f4f4f4;
+      --primary: #007bff;
+      --primary-hover: #0056b3;
+      --border: #e0e0e0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-light);
+      color: var(--text-light);
+      margin: 0;
+      padding: 2rem;
+      transition: background 0.3s, color 0.3s;
+    }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 1.8rem;
+      margin-bottom: 1rem;
+    }
+
+    .container {
+      max-width: 900px;
+      margin: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      padding: 0.75rem;
+      font-size: 1rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: white;
+    }
+
+    .dark input,
+    .dark textarea {
+      background: #2a2a2a;
+      color: var(--text-dark);
+      border-color: #444;
+    }
+
+    .toggle-container {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .toggle-container input[type="checkbox"] {
+      appearance: none;
+      width: 40px;
+      height: 20px;
+      padding: 10px;
+      background-color: #ccc;
+      border-radius: 999px;
+      position: relative;
+      cursor: pointer;
+      outline: none;
+      transition: background 0.3s;
+    }
+
+    .toggle-container input[type="checkbox"]::before {
+      content: "";
+      position: absolute;
+      top: 2px;
+      left: 2px;
+      width: 16px;
+      height: 16px;
+      background: white;
+      border-radius: 50%;
+      transition: transform 0.3s;
+    }
+
+    .toggle-container input[type="checkbox"]:checked {
+      background-color: var(--primary);
+    }
+
+    .toggle-container input[type="checkbox"]:checked::before {
+      transform: translateX(20px);
+    }
+
+    button {
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      background-color: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      align-self: start;
+    }
+
+    button:hover {
+      background-color: var(--primary-hover);
+    }
+
+    .pdf-container {
+      display: flex;
+      gap: 1rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+
+    iframe {
+      flex: 1;
+      min-width: 400px;
+      height: 700px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: white;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="toggle-container">
+      <label for="darkModeToggle">Dark Mode</label>
+      <input type="checkbox" id="darkModeToggle" onchange="toggleDarkMode()" />
+    </div>
+
+    <h1>Letter of Intent to Marry</h1>
+    <p style="margin: 0 auto; font-size: 1rem; color: #555;">
+      Use this free online generator to create a USCIS-compliant Letter of Intent to Marry PDF. Designed specifically for K-1 Fiancé Visa (Form I-129F) applications, this tool allows both the petitioner and beneficiary to fill out and preview their forms in real-time — no installation or signup required.
+    </p>
+
+    <div class="field">
+      <label for="petitioner">Petitioner</label>
+      <input id="petitioner" type="text" />
+    </div>
+    <div class="field">
+      <label for="petitionerAddress">Petitioner's Address</label>
+      <textarea id="petitionerAddress" rows="3"></textarea>
+    </div>
+    <div class="field">
+      <label for="beneficiary">Beneficiary</label>
+      <input id="beneficiary" type="text" />
+    </div>
+    <div class="field">
+      <label for="beneficiaryAddress">Beneficiary's Address</label>
+      <textarea id="beneficiaryAddress" rows="3"></textarea>
+    </div>
+    <button onclick="downloadPDFs()">Download PDFs</button>
+    <div class="pdf-container">
+      <iframe id="pdfPreviewPetitioner"></iframe>
+      <iframe id="pdfPreviewBeneficiary"></iframe>
+    </div>
+  </div>
+
+  <script>
+    let inputTimeout;
+    const fields = ["petitioner", "petitionerAddress", "beneficiary", "beneficiaryAddress"];
+
+    fields.forEach((id) => {
+      document.getElementById(id).addEventListener("input", () => {
+        clearTimeout(inputTimeout);
+        inputTimeout = setTimeout(generatePDFs, 500);
+      });
+    });
+
+    window.onload = () => {
+      if (localStorage.getItem("darkMode") === "true") {
+        document.body.classList.add("dark");
+        document.getElementById("darkModeToggle").checked = true;
+      }
+      generatePDFs();
+    };
+
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark"));
+    }
+
+    function generatePDFs() {
+      const { jsPDF } = window.jspdf;
+      const petitioner = document.getElementById("petitioner").value || "";
+      const beneficiary = document.getElementById("beneficiary").value || "";
+      const petitionerAddress = document.getElementById("petitionerAddress").value || "";
+      const beneficiaryAddress = document.getElementById("beneficiaryAddress").value || "";
+      const date = new Date();
+      const formattedDate = date.toLocaleString("default", { month: "long" }) + " " + date.getDate() + " " + date.getFullYear();
+
+      function createPDF(type, name, address) {
+        const doc = new jsPDF({ unit: "mm", format: "a4" });
+        const margin = 20;
+        const lineHeight = 7;
+        let y = margin;
+
+        doc.setFont("Times", "bold");
+        doc.setFontSize(16);
+        doc.text("LETTER OF INTENT TO MARRY", 105, y, { align: "center" });
+        y += lineHeight;
+        doc.text(`(${type.toUpperCase()})`, 105, y, { align: "center" });
+        y += lineHeight * 2;
+
+        doc.setFont("Times", "normal");
+        doc.setFontSize(12);
+        doc.text(name, margin, y); y += lineHeight;
+        const addressLines = doc.splitTextToSize(address, 170);
+        doc.text(addressLines, margin, y); y += lineHeight * addressLines.length;
+        doc.text("Date: " + formattedDate, margin, y); y += lineHeight * 1.5;
+
+        doc.text("USCIS", margin, y); y += lineHeight;
+        for (let i = 0; i < 4; i++) doc.text("____________________", margin, y), y += lineHeight;
+        y += lineHeight * 0.5;
+
+        doc.setFont("Times", "bold");
+        doc.text("RE: I-129F, Petition for Alien Fiance", margin, y); y += lineHeight * 1.2;
+
+        doc.setFont("Times", "normal");
+        doc.text("Petitioner: " + petitioner, margin, y); y += lineHeight;
+        doc.text("Beneficiary: " + beneficiary, margin, y); y += lineHeight * 1.5;
+
+        let body;
+        if (type === "beneficiary") {
+          body = `To Whom It May Concern,\n\nI, ${beneficiary}, am the fiancé and beneficiary of ${petitioner}, who is a U.S citizen, as well as my petitioner for the I-129F. I hereby state that I am legally able and willing to marry ${petitioner} within 90 days after my arrival in the United States using the K-1 Fiancé Visa.\n\nThank you for your consideration in this matter.\n\nSincerely,\n\nBeneficiary's Signature: ____________________________        Date: ${formattedDate}\n\nPrint Name: ${beneficiary}`;
+        } else {
+          body = `To Whom It May Concern,\n\nI, ${petitioner}, am the petitioner for the I-129F petition on behalf of my fiancé, ${beneficiary}. I hereby state that I am legally able and willing to marry ${beneficiary} within 90 days of his arrival in the United States using the K-1 Fiancé Visa.\n\nThank you for your consideration in this matter.\n\nSincerely,\n\nPetitioner's Signature: ____________________________        Date: ${formattedDate}\n\nPrint Name: ${petitioner}`;
+        }
+
+        const splitText = doc.splitTextToSize(body, 170);
+        doc.text(splitText, margin, y);
+
+        doc.setFontSize(10);
+        doc.text("Page 1 of 1", 105, 290, { align: "center" });
+
+        return doc;
+      }
+
+      const beneficiaryPDF = createPDF("beneficiary", beneficiary, beneficiaryAddress);
+      const petitionerPDF = createPDF("petitioner", petitioner, petitionerAddress);
+
+      document.getElementById("pdfPreviewPetitioner").src = URL.createObjectURL(petitionerPDF.output("blob"));
+      document.getElementById("pdfPreviewBeneficiary").src = URL.createObjectURL(beneficiaryPDF.output("blob"));
+    }
+
+    function downloadPDFs() {
+      const petitioner = document.getElementById("petitioner").value || "petitioner";
+      const beneficiary = document.getElementById("beneficiary").value || "beneficiary";
+
+      const petitionerPDF = generatePDFs.createPDF("petitioner", petitioner, document.getElementById("petitionerAddress").value);
+      const beneficiaryPDF = generatePDFs.createPDF("beneficiary", beneficiary, document.getElementById("beneficiaryAddress").value);
+
+      petitionerPDF.save(`intent_to_marry_${petitioner.toLowerCase().replace(/\\s+/g, '_')}.pdf`);
+      beneficiaryPDF.save(`intent_to_marry_${beneficiary.toLowerCase().replace(/\\s+/g, '_')}.pdf`);
+    }
+  </script>
+</body>
+</html>
