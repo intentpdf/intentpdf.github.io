@@ -206,61 +206,64 @@
       localStorage.setItem("darkMode", document.body.classList.contains("dark"));
     }
 
-    function generatePDFs() {
+    function createPDF(type, name, address) {
       const { jsPDF } = window.jspdf;
+      const petitioner = document.getElementById("petitioner").value || "";
+      const beneficiary = document.getElementById("beneficiary").value || "";
+      const date = new Date();
+      const formattedDate = date.toLocaleString("default", { month: "long" }) + " " + date.getDate() + " " + date.getFullYear();
+
+      const doc = new jsPDF({ unit: "mm", format: "a4" });
+      const margin = 20;
+      const lineHeight = 7;
+      let y = margin;
+
+      doc.setFont("Times", "bold");
+      doc.setFontSize(16);
+      doc.text("LETTER OF INTENT TO MARRY", 105, y, { align: "center" });
+      y += lineHeight;
+      doc.text(`(${type.toUpperCase()})`, 105, y, { align: "center" });
+      y += lineHeight * 2;
+
+      doc.setFont("Times", "normal");
+      doc.setFontSize(12);
+      doc.text(name, margin, y); y += lineHeight;
+      const addressLines = doc.splitTextToSize(address, 170);
+      doc.text(addressLines, margin, y); y += lineHeight * addressLines.length;
+      doc.text("Date: " + formattedDate, margin, y); y += lineHeight * 1.5;
+
+      doc.text("USCIS", margin, y); y += lineHeight;
+      for (let i = 0; i < 4; i++) doc.text("____________________", margin, y), y += lineHeight;
+      y += lineHeight * 0.5;
+
+      doc.setFont("Times", "bold");
+      doc.text("RE: I-129F, Petition for Alien Fiance", margin, y); y += lineHeight * 1.2;
+
+      doc.setFont("Times", "normal");
+      doc.text("Petitioner: " + petitioner, margin, y); y += lineHeight;
+      doc.text("Beneficiary: " + beneficiary, margin, y); y += lineHeight * 1.5;
+
+      let body;
+      if (type === "beneficiary") {
+        body = `To Whom It May Concern,\n\nI, ${beneficiary}, am the fiancé and beneficiary of ${petitioner}, who is a U.S citizen, as well as my petitioner for the I-129F. I hereby state that I am legally able and willing to marry ${petitioner} within 90 days after my arrival in the United States using the K-1 Fiancé Visa.\n\nThank you for your consideration in this matter.\n\nSincerely,\n\nBeneficiary's Signature: ____________________________        Date: ${formattedDate}\n\nPrint Name: ${beneficiary}`;
+      } else {
+        body = `To Whom It May Concern,\n\nI, ${petitioner}, am the petitioner for the I-129F petition on behalf of my fiancé, ${beneficiary}. I hereby state that I am legally able and willing to marry ${beneficiary} within 90 days of his arrival in the United States using the K-1 Fiancé Visa.\n\nThank you for your consideration in this matter.\n\nSincerely,\n\nPetitioner's Signature: ____________________________        Date: ${formattedDate}\n\nPrint Name: ${petitioner}`;
+      }
+
+      const splitText = doc.splitTextToSize(body, 170);
+      doc.text(splitText, margin, y);
+
+      doc.setFontSize(10);
+      doc.text("Page 1 of 1", 105, 290, { align: "center" });
+
+      return doc;
+    }
+
+    function generatePDFs() {
       const petitioner = document.getElementById("petitioner").value || "";
       const beneficiary = document.getElementById("beneficiary").value || "";
       const petitionerAddress = document.getElementById("petitionerAddress").value || "";
       const beneficiaryAddress = document.getElementById("beneficiaryAddress").value || "";
-      const date = new Date();
-      const formattedDate = date.toLocaleString("default", { month: "long" }) + " " + date.getDate() + " " + date.getFullYear();
-
-      function createPDF(type, name, address) {
-        const doc = new jsPDF({ unit: "mm", format: "a4" });
-        const margin = 20;
-        const lineHeight = 7;
-        let y = margin;
-
-        doc.setFont("Times", "bold");
-        doc.setFontSize(16);
-        doc.text("LETTER OF INTENT TO MARRY", 105, y, { align: "center" });
-        y += lineHeight;
-        doc.text(`(${type.toUpperCase()})`, 105, y, { align: "center" });
-        y += lineHeight * 2;
-
-        doc.setFont("Times", "normal");
-        doc.setFontSize(12);
-        doc.text(name, margin, y); y += lineHeight;
-        const addressLines = doc.splitTextToSize(address, 170);
-        doc.text(addressLines, margin, y); y += lineHeight * addressLines.length;
-        doc.text("Date: " + formattedDate, margin, y); y += lineHeight * 1.5;
-
-        doc.text("USCIS", margin, y); y += lineHeight;
-        for (let i = 0; i < 4; i++) doc.text("____________________", margin, y), y += lineHeight;
-        y += lineHeight * 0.5;
-
-        doc.setFont("Times", "bold");
-        doc.text("RE: I-129F, Petition for Alien Fiance", margin, y); y += lineHeight * 1.2;
-
-        doc.setFont("Times", "normal");
-        doc.text("Petitioner: " + petitioner, margin, y); y += lineHeight;
-        doc.text("Beneficiary: " + beneficiary, margin, y); y += lineHeight * 1.5;
-
-        let body;
-        if (type === "beneficiary") {
-          body = `To Whom It May Concern,\n\nI, ${beneficiary}, am the fiancé and beneficiary of ${petitioner}, who is a U.S citizen, as well as my petitioner for the I-129F. I hereby state that I am legally able and willing to marry ${petitioner} within 90 days after my arrival in the United States using the K-1 Fiancé Visa.\n\nThank you for your consideration in this matter.\n\nSincerely,\n\nBeneficiary's Signature: ____________________________        Date: ${formattedDate}\n\nPrint Name: ${beneficiary}`;
-        } else {
-          body = `To Whom It May Concern,\n\nI, ${petitioner}, am the petitioner for the I-129F petition on behalf of my fiancé, ${beneficiary}. I hereby state that I am legally able and willing to marry ${beneficiary} within 90 days of his arrival in the United States using the K-1 Fiancé Visa.\n\nThank you for your consideration in this matter.\n\nSincerely,\n\nPetitioner's Signature: ____________________________        Date: ${formattedDate}\n\nPrint Name: ${petitioner}`;
-        }
-
-        const splitText = doc.splitTextToSize(body, 170);
-        doc.text(splitText, margin, y);
-
-        doc.setFontSize(10);
-        doc.text("Page 1 of 1", 105, 290, { align: "center" });
-
-        return doc;
-      }
 
       const beneficiaryPDF = createPDF("beneficiary", beneficiary, beneficiaryAddress);
       const petitionerPDF = createPDF("petitioner", petitioner, petitionerAddress);
@@ -273,12 +276,13 @@
       const petitioner = document.getElementById("petitioner").value || "petitioner";
       const beneficiary = document.getElementById("beneficiary").value || "beneficiary";
 
-      const petitionerPDF = generatePDFs.createPDF("petitioner", petitioner, document.getElementById("petitionerAddress").value);
-      const beneficiaryPDF = generatePDFs.createPDF("beneficiary", beneficiary, document.getElementById("beneficiaryAddress").value);
+      const petitionerPDF = createPDF("petitioner", petitioner, document.getElementById("petitionerAddress").value);
+      const beneficiaryPDF = createPDF("beneficiary", beneficiary, document.getElementById("beneficiaryAddress").value);
 
-      petitionerPDF.save(`intent_to_marry_${petitioner.toLowerCase().replace(/\\s+/g, '_')}.pdf`);
-      beneficiaryPDF.save(`intent_to_marry_${beneficiary.toLowerCase().replace(/\\s+/g, '_')}.pdf`);
+      petitionerPDF.save(`intent_to_marry_${petitioner.toLowerCase().replace(/\s+/g, '_')}.pdf`);
+      beneficiaryPDF.save(`intent_to_marry_${beneficiary.toLowerCase().replace(/\s+/g, '_')}.pdf`);
     }
+
   </script>
 </body>
 </html>
