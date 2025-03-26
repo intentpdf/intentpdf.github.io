@@ -64,8 +64,8 @@
       --bg-dark: #1f1f1f;
       --text-light: #333;
       --text-dark: #f4f4f4;
-      --primary: #007bff;
-      --primary-hover: #0056b3;
+      --primary: oklch(0.279 0.041 260.031);
+      --primary-hover: oklch(0.129 0.042 264.695);
       --border: #e0e0e0;
     }
 
@@ -234,7 +234,7 @@
       <label for="beneficiaryAddress">Beneficiary's Address</label>
       <textarea id="beneficiaryAddress" rows="3"></textarea>
     </div>
-    <button style="color: #ffffff;" onclick="downloadPDFs()">Download PDFs</button>
+    <button onclick="downloadPDFs()">Download PDFs</button>
     <div class="pdf-container">
       <iframe id="pdfPreviewPetitioner" title="Petitioner PDF Preview"></iframe>
       <iframe id="pdfPreviewBeneficiary" title="Beneficiary PDF Preview"></iframe>
