@@ -19,8 +19,8 @@ Create USCIS-compliant **Letters of Intent to Marry** for your **K-1 Fiancé Vis
 
 ## 📸 Screenshots
 
-![Preview 1](images/preview-light.png)
-![Preview 2](images/preview-dark.png)
+![Preview 1](images/intentpdf-preview-light.webp)
+![Preview 2](images/intentpdf-preview-dark.webp)
 
 > Replace with your actual screenshots in `images/`.
 
